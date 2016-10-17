@@ -1,23 +1,27 @@
 %%
 clear all ; close all ; clc;
 
-%%
+%%  plot B vector
 clear all ; close all ; clc;
 
 % given from random determine
-rm = 0.8;                       % magnetic dipole center to sensor distance
-theta_m = pi/3;                 % magnetic dipole center to sensor distance
-theta_d = pi/3;                 % magnetic dipole orientation
-theta_e = pi/2;                 % earth magnetism orientation
+rm = 0.5;                         % magnetic dipole center to sensor distance
+theta_m = pi/3;                   % magnetic dipole center to sensor orientation
+theta_d = pi/3;                   % magnetic dipole orientation
+theta_e = pi/2;                   % earth magnetism orientation
+% rm = 1.2171;
+% theta_m = 4.5339;
+% theta_d = 1.9483;
+% theta_e = 3.1346;
 % given from measurement
-mag = 0.01;                     % magnetic dipole
-Be = 0.25;                      % earth magnetism
+mag = 0.005;                      % magnetic dipole
+Be = 0.25;                        % earth magnetism
 % sensor coordinates
 s1 = [0 ; 0];
 s2 = [-0.11 ; -0.34];
 % magnetic dipole coordinates
 xm = rm*cos(theta_m);
-ym = rm*sin(theta_m) - 0.14;
+ym = rm*sin(theta_m) - 0.14;      % from car center to magnetic dipole
 m = [xm ; ym];
 % magnetic dipole orientation
 chk = 0.07;
@@ -58,8 +62,17 @@ Q = (B_1/Be)'*(B_2/Be);
 V = Q - 1;
 % orientation error
 phi_e = atan2(Bey,Bex);
+if phi_e < 0
+    phi_e = phi_e + 2*pi;
+end
 phi_1 = atan2(By1,Bx1);
+if phi_1 < 0
+    phi_1 = phi_1 + 2*pi;
+end
 phi_2 = atan2(By2,Bx2);
+if phi_2 < 0
+    phi_2 = phi_2 + 2*pi;
+end
 phi_avg = (phi_1 + phi_2) / 2;
 phi_errd = (phi_avg - phi_e)*180/pi;
 % check geometry from figure
@@ -71,14 +84,14 @@ plot(s2(1,1),s2(2,1),'-o','MarkerSize',15,'color','b');
 plot([s1(1,1) s2(1,1)],[s1(2,1) s2(2,1)],'LineWidth',1,'Color','b');
 % magnetic dipole direction
 plot(m(1,1),m(2,1),'-o','MarkerSize',15,'color','r');
-plot(m2(1,1),m2(2,1),'-o','MarkerSize',10,'color','r');
+plot(m2(1,1),m2(2,1),'-o','MarkerSize',5,'color','r');
 plot([m(1,1) m2(1,1)],[m(2,1) m2(2,1)],'LineWidth',1,'Color','r');
 % two sensor to magnetic dipole line
 plot([m(1,1) s1(1,1)],[m(2,1) s1(2,1)],'LineWidth',1.3,'Color','m');
 plot([m(1,1) s2(1,1)],[m(2,1) s2(2,1)],'LineWidth',1.3,'Color','m');
 % delta magnetic dipole vector
-plot([s1(1,1) s1(1,1)+dBx1],[s1(2,1) s1(2,1)+dBy1],'-.','LineWidth',1.5,'Color','k');
-plot([s2(1,1) s2(1,1)+dBx2],[s2(2,1) s2(2,1)+dBy2],'-.','LineWidth',1.5,'Color','k');
+plot([s1(1,1) s1(1,1)+dBx1],[s1(2,1) s1(2,1)+dBy1],'LineWidth',2,'Color','k');
+plot([s2(1,1) s2(1,1)+dBx2],[s2(2,1) s2(2,1)+dBy2],'LineWidth',2,'Color','k');
 % earth magnetism vector
 plot([s1(1,1) s1(1,1)+Bex],[s1(2,1) s1(2,1)+Bey],'-.','LineWidth',1.5,'Color','c');
 plot([s2(1,1) s2(1,1)+Bex],[s2(2,1) s2(2,1)+Bey],'-.','LineWidth',1.5,'Color','c');
@@ -86,14 +99,15 @@ plot([s2(1,1) s2(1,1)+Bex],[s2(2,1) s2(2,1)+Bey],'-.','LineWidth',1.5,'Color','c
 plot([s1(1,1) s1(1,1)+Bx1],[s1(2,1) s1(2,1)+By1],'LineWidth',1.5,'Color','g');
 plot([s2(1,1) s2(1,1)+Bx2],[s2(2,1) s2(2,1)+By2],'LineWidth',1.5,'Color','g');
 
-%%
+%%  random simulation
 clear all ; close all ; clc;
 
 % start random determine
-N = 1000000;
-R = zeros(N,4);
+N = 20000000;
+R = zeros(N,8);
+
 div = 50;
-rV = 0.3;               % range of V : -0.3 ~ 0.3
+rV = 0.3;                    % range of V : -0.3 ~ 0.3
 gap = rV/div;
 n = zeros(2*div,1);
 ut = zeros(2*div,1);
@@ -115,14 +129,14 @@ for i = 1 : N
     theta_d = 2*pi*rand();
     theta_e = 2*pi*rand();
     % given from measurement
-    mag = 0.005;                     % magnetic dipole
-    Be = 0.25;                       % earth magnetism
+    mag = 0.005;                       % magnetic dipole
+    Be = 0.25;                         % earth magnetism
     % sensor coordinates
     s1 = [0 ; 0];
     s2 = [-0.11 ; -0.34];
     % magnetic dipole coordinates
     xm = rm*cos(theta_m);
-    ym = rm*sin(theta_m) - 0.14;
+    ym = rm*sin(theta_m) - 0.14;       % from car center to magnetic dipole
     m = [xm ; ym];
     % distance from magnetic dipole to sensor
     r1 = sqrt( ( m(1,1)-s1(1,1) )^2 + ( m(2,1)-s1(2,1) )^2 );
@@ -170,8 +184,14 @@ for i = 1 : N
     if phi_errd < -180
         phi_errd = phi_errd + 360;
     end
+    if phi_errd > 150
+        phi_errd = phi_errd - 180;
+    end
+    if phi_errd < -150
+        phi_errd = phi_errd + 180;
+    end
     
-    Ans = [phi_errd V rxm rym];
+    Ans = [phi_errd V rxm rym rm theta_m theta_d theta_e];
     R(i,:) = Ans;
     
     if V > -rV && V < rV
@@ -192,11 +212,14 @@ plot(R(:,1),R(:,2),'*');
 grid on;
 xlabel('error (deg)') ; ylabel('trust index');
 
-figure;
-plot(R(:,3),R(:,4),'o');
-xlabel('xm (m)') ; ylabel('ym (m)');
+% figure;
+% plot(R(:,3),R(:,4),'o');
+% xlabel('xm (m)') ; ylabel('ym (m)');
 
+Vx = -rV+gap : gap : rV;
 figure;
-plot(st);
-xlabel('range') ; ylabel('variance');
+plot(Vx,st);
+grid on;
+axis([-0.32 0.32 0 46]);
+xlabel('trust index range') ; ylabel('variance');
 
