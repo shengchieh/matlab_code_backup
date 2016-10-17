@@ -106,7 +106,7 @@ clear all ; close all ; clc;
 N = 20000000;
 R = zeros(N,8);
 
-div = 50;
+div = 100;
 rV = 0.3;                    % range of V : -0.3 ~ 0.3
 gap = rV/div;
 n = zeros(2*div,1);
@@ -222,4 +222,10 @@ plot(Vx,st);
 grid on;
 axis([-0.32 0.32 0 46]);
 xlabel('trust index range') ; ylabel('variance');
+
+figure;
+plot(Vx,ut);
+grid on;
+axis([-0.32 0.32 -0.5 0.5]);
+xlabel('trust index range') ; ylabel('average');
 
