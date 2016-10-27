@@ -5,8 +5,8 @@ clear all ; close all ; clc;
 clear all ; close all ; clc;
 
 N = 50;
-r_1 = linspace(0.2, 0.5, N);                        % [0.3,2] 之間取 N 點
-theta_1 = linspace(20*pi/180, 80*pi/180, N);       % [20*pi/180,160*pi/180] 之間取 N 點
+r_1 = linspace(0.3, 0.45, N);                        % [0.3,2] 之間取 N 點
+theta_1 = linspace(45*pi/180, 135*pi/180, N);       % [20*pi/180,160*pi/180] 之間取 N 點
 
 R = 0.33;               % sensor 間距
 M = 0.002;              % dipole 強度
@@ -24,7 +24,7 @@ Y2 = zeros(N,N);   % theta_2
 for i = 1:N
     for j = 1:N
         X2(i,j) = sqrt(X1(i,j)^2 + R^2 - 2*X1(i,j)*R*cos(Y1(i,j)));
-        Y2(i,j) = asin((X1(i,j)/X2(i,j))*sin(Y1(i,j)));
+        Y2(i,j) = acos( (X1(i,j)*cos(Y1(i,j)) - R) / X2(i,j) );
     end
 end
 
@@ -51,7 +51,7 @@ theta1 = 1.289;
 s1 = [r1*sin(theta1) ; r1*cos(theta1)];
 R = 0.33;           % sensor 間距
 r2 = sqrt( r1^2 + R^2 - 2*r1*R*cos(theta1) );
-theta2 = asin( (r1/r2) * sin(theta1) );
+theta2 = acos( (r1*cos(theta1) - R) / r2 );
 s2 = [r2*sin(theta2) ; r2*cos(theta2)];
 
 Be = 0.2;           % 地磁強度
