@@ -6,12 +6,12 @@ clear all ; close all ; clc;
 
 % given from random determine
 rm = 0.35;                         % magnetic dipole center to sensor distance
-theta_m = pi/9;                   % magnetic dipole center to sensor orientation
-theta_d = pi/5;                   % magnetic dipole orientation
-theta_e = pi/2;                   % earth magnetism orientation
+theta_m = pi/9;                    % magnetic dipole center to sensor orientation
+theta_d = pi/5;                    % magnetic dipole orientation
+theta_e = pi/2;                    % earth magnetism orientation
 % given from measurement
-mag = 0.003;                      % magnetic dipole
-Be = 0.2;                        % earth magnetism
+mag = 0.003;                       % magnetic dipole
+Be = 0.2;                          % earth magnetism
 % sensor coordinates
 s1 = [0 ; 0];
 s2 = [-0.11 ; -0.34];
@@ -99,7 +99,7 @@ plot([s2(1,1) s2(1,1)+Bex],[s2(2,1) s2(2,1)+Bey],'LineWidth',2.5,'Color','c');
 % total magnetic dipole vector
 plot([s1(1,1) s1(1,1)+Bx1],[s1(2,1) s1(2,1)+By1],'LineWidth',2.5,'Color','g');
 plot([s2(1,1) s2(1,1)+Bx2],[s2(2,1) s2(2,1)+By2],'LineWidth',2.5,'Color','g');
-axis([-0.2 0.5 -0.4 0.3]);
+axis([-0.2 0.4 -0.4 0.25]);
 
 %%  random simulation
 clear all ; close all ; clc;
@@ -109,7 +109,7 @@ N = 20000000;
 R = zeros(N,8);
 
 div = 100;
-rV = 0.3;                    % range of V : -0.3 ~ 0.3
+rV = 0.2;                    % range of V : -0.2 ~ 0.2
 gap = rV/div;
 n = zeros(2*div,1);
 ut = zeros(2*div,1);
@@ -117,9 +117,9 @@ st = zeros(2*div,1);
 
 for i = 1 : N
     while 1
-        rxm = 3*rand();
-        rym = 3*rand();
-        if rxm <= 0.6 && rym <= 0.6
+        rxm = 2.5*rand();
+        rym = 2.5*rand();
+        if rxm <= 0.45 && rym <= 0.45
             ;
         else
             break;
@@ -131,14 +131,14 @@ for i = 1 : N
     theta_d = 2*pi*rand();
     theta_e = 2*pi*rand();
     % given from measurement
-    mag = 0.005;                       % magnetic dipole
-    Be = 0.25;                         % earth magnetism
+    mag = 1.328*10^-7;                        % magnetic dipole
+    Be = 0.364*10^-4;                         % earth magnetism
     % sensor coordinates
     s1 = [0 ; 0];
     s2 = [-0.11 ; -0.34];
     % magnetic dipole coordinates
     xm = rm*cos(theta_m);
-    ym = rm*sin(theta_m) + s2(2,1)/2;       % from car center to magnetic dipole
+    ym = rm*sin(theta_m) + s2(2,1)/2;         % from car center to magnetic dipole
     m = [xm ; ym];
     % distance from magnetic dipole to sensor
     r1 = sqrt( ( m(1,1)-s1(1,1) )^2 + ( m(2,1)-s1(2,1) )^2 );
@@ -212,20 +212,18 @@ for j = 1 : 2*div
     st(j,1) = st(j,1) / n(j,1);
 end
 
-plot(R(:,1),R(:,2),'*');
+plot(R(:,2),R(:,1),'*');
 grid on;
-xlabel('error (deg)') ; ylabel('trust index');
+xlabel('Q') ; ylabel('orientation error (deg)');
 
 Vx = -rV+gap : gap : rV;
 figure;
-plot(Vx,st);
-grid on;
-axis([-0.32 0.32 0 46]);
-xlabel('trust index range') ; ylabel('variance');
-
-figure;
 plot(Vx,ut);
 grid on;
-axis([-0.32 0.32 -0.5 0.5]);
-xlabel('trust index range') ; ylabel('average');
+xlabel('Q') ; ylabel('orientation error mean (deg)');
+
+figure;
+plot(Vx,st);
+grid on;
+xlabel('Q') ; ylabel('orientation error variance (deg)');
 
