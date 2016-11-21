@@ -33,3 +33,22 @@ plot(vx,st_10,'LineWidth',2,'Color','b');
 plot(vx,st_20,'LineWidth',2,'Color','g');
 plot(vx,st_40,'LineWidth',2,'Color','r');
 legend('0.5*M_{0}','M_{0}','2*M_{0}','4*M_{0}');
+
+%%
+clear all ; close all ; clc;
+
+vx = load('vx.txt');
+ut_10 = load('ut_10.txt');
+st_10 = load('st_10.txt');
+
+figure;
+plot(vx,ut_10,'LineWidth',1.5,'Color','b');
+grid on;
+xlabel('Q') ; ylabel('orientation error mean (deg)');
+axis([-0.18 0.18 -0.1 0.1])
+
+figure;
+plot(vx,st_10,'LineWidth',1.5,'Color','b');
+grid on;
+xlabel('Q') ; ylabel('orientation error variance (deg)');
+axis([-0.18 0.18 0 15])
